@@ -197,13 +197,6 @@ if __name__ == "__main__":
         )
     gener.process()
 
-#write_gap(Xception, (299, 299), xception_input)
-
-#write_gap(InceptionV3, (299, 299), inception_input)
-
-#write_gap(VGG16, (224, 224))
-
-#write_gap(VGG19, (224, 224))
 
 #Your statements here
 

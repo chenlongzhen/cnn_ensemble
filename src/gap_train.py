@@ -8,12 +8,29 @@ import sys,os
 import functools
 
 import logging
+import tensorflow as tf
+import keras.backend.tensorflow_backend as KTF
 import keras
 import numpy as np
 from keras.models import save_model
 from sklearn.utils import shuffle
 from keras.callbacks import TensorBoard,EarlyStopping,CSVLogger,ModelCheckpoint
 import yaml
+
+def get_session(allow_growth=True):
+    '''Assume that you have 6GB of GPU memory and want to allocate ~2GB'''
+
+    num_threads = os.environ.get('OMP_NUM_THREADS')
+    #gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=gpu_fraction)
+    gpu_options = tf.GPUOptions(allow_growth=True)
+
+
+    if num_threads:
+        return tf.Session(config=tf.ConfigProto(
+            gpu_options=gpu_options, intra_op_parallelism_threads=num_threads))
+    else:
+        return tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
+
 
 def myLog(logPath):
     '''
@@ -88,6 +105,10 @@ model_path = '../data/model'
 end_model_path = '../data/endModel'
 if not os.path.isdir(model_path): os.mkdir(model_path)
 if not os.path.isdir(end_model_path): os.mkdir(end_model_path)
+
+# gpu setting
+allow_growth = bool(CNF['allow_growth'])
+KTF.set_session(get_session(allow_growth=allow_growth))
 
 # topk_acc
 topK_acc = CNF['topK_acc']

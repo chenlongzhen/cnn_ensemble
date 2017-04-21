@@ -3,7 +3,7 @@
 #   chenlongzhen@autohome.com.cn
 #
 #------------verison------------
-version:  test
+version:  v1
 #
 #------------common path------------
 #
@@ -40,9 +40,9 @@ test_path:   'data/test' #最终预测的图片
 #目前支持的模型有：
 
 use_model:
-    - ResNet50
+#    - ResNet50
     - Xception
-    - InceptionV3
+#    - InceptionV3
 #    - VGG16 
 
 #------------layer setting------------
@@ -60,9 +60,10 @@ board_path: 'data/tensorboard'
 train_log: 'data/train_log'
 weight_path: 'data/weight'
 batch_size: 128
-nb_epoch: 3
+nb_epoch: 10
 validation_split: 0.2
 topK_acc: 5 # topN accuracy
+allow_growth: 1 # gpu memory dynamic allocation
 
 #----------predict setting----------
 #dog_cat 是否是dogvscat
