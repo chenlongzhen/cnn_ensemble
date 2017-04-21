@@ -1,0 +1,10 @@
+train*
+old
+test*
+*.h5
+*.zip
+*.png
+pred.csv
+.ipy*
+data
+*.ipynb
