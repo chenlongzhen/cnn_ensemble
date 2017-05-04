@@ -88,6 +88,9 @@ class feature_generation:
         elif self.gen_layer == 'top':
             base_model = MODEL(input_shape=input_shape,weights='imagenet', include_top=True)
             model = base_model
+        elif self.gen_layer == 'notop_ori':
+            base_model = MODEL(input_shape=input_shape,weights='imagenet', include_top=False)
+            model = Model(base_model.input, base_model.output) # model build, add a GAP layyer
 
         #logger.info(model.summary())
         return model
@@ -127,7 +130,7 @@ class feature_generation:
 
         else:
             gen = ImageDataGenerator(preprocessing_function=lambda_func)
-            test_generator = gen.flow_from_directory(self.testPath, image_size, shuffle=False, 
+            test_generator = gen.flow_from_directory(self.genPath, image_size, shuffle=False, 
                                                      batch_size=1,
                                                      class_mode=None) # no targets get yielded (only input images are yielded).
             logger.info("image generator finish.")
@@ -178,11 +181,16 @@ if __name__ == "__main__":
     use_model = CNF['use_model']
     gen_layer = CNF['gen_layer']
 
-    genPath = CNF['gen_path']
-    train_path = prefix + CNF['train_path']
-    test_path = prefix + CNF['test_path']
+    genPath = prefix +CNF['gen_path']
+    if genPath is 'None':
+        train_path = prefix + CNF['train_path']
+        test_path = prefix + CNF['test_path']
+    else:
+        train_path = test_path = 'None'
+
     log_path = prefix + CNF['log_path']
     if not os.path.isdir(log_path): os.mkdir(log_path)
+    if not os.path.isdir(prefix+"/data/model"): os.mkdir(prefix+"/data/model")
 
     logger =  myLog(log_path+"/log_{}".format(version))  
     logger.info(CNF)

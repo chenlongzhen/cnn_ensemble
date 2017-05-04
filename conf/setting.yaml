@@ -7,7 +7,7 @@ version:  v1
 #
 #------------common path------------
 #
-prefix: /data/chenlongzhen/CTR/tools/cnn_toolbox/cnn_feature_gen/
+prefix: /data/chenlongzhen/cnn_feature_gen/
 log_path:  data/logs
 #------------path------------
 #genPath:只生成图片的特征，这个选项不是None那么，trainPath&testPath设置为None #                  testPic/
@@ -32,9 +32,9 @@ log_path:  data/logs
 #                           0001.jpg
 #                           0002.jpg
 
-gen_path:    'None' #只输出这个目录的特征保存为h5
-train_path:  'data/train_v1' #训练和交叉验证的图片
-test_path:   'data/test' #最终预测的图片
+gen_path:    'data/test1' #只输出这个目录的特征保存为h5
+#train_path:  'data/train_v1' #训练和交叉验证的图片
+#test_path:   'data/test' #最终预测的图片
 #------------model setting------------
 #使用那种模型产生特征
 #目前支持的模型有：
@@ -48,10 +48,11 @@ use_model:
 #------------layer setting------------
 #产生那一层的特征
 #notop: 没有fc层的特征 目前是经过conv层后GlobalAveragePooling2D()后的结果.否则参数过多。
+#notop_ori:没有fc层的特征 
 #fc: 最后一个fc的特征 
 #top: 完整网络输出的特征（即分类的结果）
 
-gen_layer: 'notop'
+gen_layer: 'notop_ori'
 
 #-----------train-----------------
 # train 文件的额外设置项
