@@ -92,7 +92,7 @@ class feature_generation:
             base_model = MODEL(input_shape=input_shape,weights='imagenet', include_top=False)
             model = Model(base_model.input, base_model.output) # model build, add a GAP layyer
 
-        #logger.info(model.summary())
+        logger.info(model.summary())
         return model
     
     

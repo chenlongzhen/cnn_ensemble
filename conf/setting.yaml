@@ -41,9 +41,9 @@ gen_path:    'data/test1' #只输出这个目录的特征保存为h5
 
 use_model:
 #    - ResNet50
-    - Xception
+#    - Xception
 #    - InceptionV3
-#    - VGG16 
+    - VGG16 
 
 #------------layer setting------------
 #产生那一层的特征
