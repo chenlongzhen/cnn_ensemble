@@ -3,11 +3,11 @@
 #   chenlongzhen@autohome.com.cn
 #
 #------------verison------------
-version:  v1
+version:  vdball
 #
 #------------common path------------
 #
-prefix: /data/chenlongzhen/cnn_feature_gen/
+prefix: /data/clz/cnn_feature_gen/
 log_path:  data/logs
 #------------path------------
 #genPath:只生成图片的特征，这个选项不是None那么，trainPath&testPath设置为None #                  testPic/
@@ -32,18 +32,21 @@ log_path:  data/logs
 #                           0001.jpg
 #                           0002.jpg
 
-gen_path:    'data/test1' #只输出这个目录的特征保存为h5
-#train_path:  'data/train_v1' #训练和交叉验证的图片
-#test_path:   'data/test' #最终预测的图片
+#gen_path:    'data/test1' #只输出这个目录的特征保存为h5
+gen_path:
+train_path:  'data/bd/traindatas/train_v2/train' #训练和交叉验证的图片
+test_path:   'data/bd/traindatas/train_v2/test' #最终预测的图片
 #------------model setting------------
 #使用那种模型产生特征
 #目前支持的模型有：
 
 use_model:
-#    - ResNet50
-#    - Xception
-#    - InceptionV3
+    - ResNet50
+    - Xception
+    - InceptionV3
     - VGG16 
+      #- VGG19
+    
 
 #------------layer setting------------
 #产生那一层的特征
@@ -52,7 +55,7 @@ use_model:
 #fc: 最后一个fc的特征 
 #top: 完整网络输出的特征（即分类的结果）
 
-gen_layer: 'notop_ori'
+gen_layer: 'notop'
 
 #-----------train-----------------
 # train 文件的额外设置项
@@ -61,10 +64,12 @@ board_path: 'data/tensorboard'
 train_log: 'data/train_log'
 weight_path: 'data/weight'
 batch_size: 128
-nb_epoch: 10
-validation_split: 0.2
-topK_acc: 5 # topN accuracy
+nb_epoch: 50 
+validation_split: 0.1
+topK_acc: 3 # topN accuracy
 allow_growth: 1 # gpu memory dynamic allocation
+num_classes: 134 # train classes
+augmentation: 1 # if aug 
 
 #----------predict setting----------
 #dog_cat 是否是dogvscat

@@ -59,7 +59,8 @@ class feature_generation:
         version = 'base',
         genPath = 'None',
         gen_layer = 'notop',
-        use_model = ['ResNet50','Xception','InceptionV3']
+        use_model = ['ResNet50','Xception','InceptionV3'],
+        augmentation = 0 
         ):
 
         self.gen_layer = gen_layer
@@ -68,6 +69,7 @@ class feature_generation:
         self.testPath = testPath
         self.version = version
         self.use_model = use_model
+        self.augmentation = augmentation
     
 
     def get_model(self,MODEL,image_size):
@@ -85,14 +87,14 @@ class feature_generation:
             #base_model.pop() # future version, same with above
             model = Model(base_model.input, fc.output) 
 
-        elif self.gen_layer == 'top':
+        elif self.gen_layer == 'notop_ori':
             base_model = MODEL(input_shape=input_shape,weights='imagenet', include_top=True)
             model = base_model
-        elif self.gen_layer == 'notop_ori':
+        elif self.gen_layer == 'top':
             base_model = MODEL(input_shape=input_shape,weights='imagenet', include_top=False)
             model = Model(base_model.input, base_model.output) # model build, add a GAP layyer
 
-        logger.info(model.summary())
+        #logger.info(model.summary())
         return model
     
     
@@ -106,8 +108,35 @@ class feature_generation:
         logger.info("image generator.")
         if self.genPath == 'None':
             gen = ImageDataGenerator(preprocessing_function=lambda_func)
-            train_generator = gen.flow_from_directory(self.trainPath, image_size, shuffle=False, 
+            augen = ImageDataGenerator(
+	featurewise_center=False,
+    samplewise_center=False,
+    featurewise_std_normalization=False,
+    samplewise_std_normalization=False,
+    zca_whitening=False,
+    zca_epsilon=1e-6,
+    rotation_range=0.2,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    shear_range=0.2,
+    zoom_range=0.2,
+    channel_shift_range=0.,
+    fill_mode='nearest',
+    cval=0.,
+    horizontal_flip=True,
+    vertical_flip=False,
+    rescale=None,
+    preprocessing_function=lambda_func,
+    data_format=K.image_data_format())
+	             
+            if self.augmentation != 1:
+                train_generator = gen.flow_from_directory(self.trainPath, image_size, shuffle=False, 
                                                       batch_size=1) # class_model default is category  
+            else:
+		logger.info("augen mode!")
+                train_generator = augen.flow_from_directory(self.trainPath, image_size, shuffle=False, 
+                                                      batch_size=1) # class_model default is category  
+                
             test_generator = gen.flow_from_directory(self.testPath, image_size, shuffle=False, 
                                                      batch_size=1,
                                                      class_mode=None) # no targets get yielded (only input images are yielded).
@@ -180,8 +209,13 @@ if __name__ == "__main__":
 
     use_model = CNF['use_model']
     gen_layer = CNF['gen_layer']
+    augmentation = CNF['augmentation']
 
-    genPath = prefix +CNF['gen_path']
+    if 'gen_path' not in CNF or CNF['gen_path'] is None:
+        genPath = 'None'
+    else:
+        genPath = prefix +CNF['gen_path']
+
     if genPath is 'None':
         train_path = prefix + CNF['train_path']
         test_path = prefix + CNF['test_path']
@@ -201,7 +235,8 @@ if __name__ == "__main__":
         version = version,
         genPath = genPath,
         gen_layer = gen_layer,
-        use_model = use_model
+        use_model = use_model,
+        augmentation = augmentation
         )
     gener.process()
 

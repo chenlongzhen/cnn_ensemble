@@ -15,6 +15,11 @@ import numpy as np
 from keras.models import save_model
 from sklearn.utils import shuffle
 from keras.callbacks import TensorBoard,EarlyStopping,CSVLogger,ModelCheckpoint
+from keras.models import Sequential
+from keras.layers import Dense, Activation,Conv1D
+from keras.layers.normalization import BatchNormalization
+from keras import layers
+
 import yaml
 
 def get_session(allow_growth=True):
@@ -69,6 +74,8 @@ test_path = CNF['test_path']
 use_model = CNF['use_model']
 
 gen_layer = CNF['gen_layer']
+
+num_classes = CNF['num_classes']
 
 # board
 board_path = prefix + '/'+CNF['board_path']
@@ -139,6 +146,8 @@ logger.info(X_test.shape)
 logger.info("[INFO] shuffle")
 X_train, y_train = shuffle(X_train, y_train)
 
+y_train = keras.utils.to_categorical(y_train, num_classes=num_classes)
+print y_train
 #################################
 # train pipe
 #################################
@@ -147,19 +156,35 @@ from keras.models import *
 from keras.layers import *
 
 logger.info("[INFO] train")
-input_tensor = Input(X_train.shape[1:])
+print(X_train.shape)
+
+#model = Sequential()
+#model.add(Dropout(0.5),input_dim=X_train.shape[1])
+#model.add(Dense(num_classes,activation='sigmoid'))
+#model.add(Dense(num_classes,activation='sigmoid',input_dim=X_train.shape[1]))
+input_tensor = Input(shape=(X_train.shape[1],))
 x = input_tensor
-x = Dropout(0.5)(x)
-x = Dense(1, activation='sigmoid')(x)
+
+x = Dropout(0.50)(x)
+x = BatchNormalization()(x)
+#x = Dense(1024)(x)
+#x = Activation('relu')(x)
+#x = Dropout(0.50)(x)
+#x = BatchNormalization()(x)
+x = Dense(num_classes)(x)
+x = Activation('softmax')(x)
+
 model = Model(input_tensor, x)
 model.summary()
 
-topK_acc = functools.partial(keras.metrics.top_k_categorical_accuracy, k=5)
+topK_acc = functools.partial(keras.metrics.top_k_categorical_accuracy, k=int(topK_acc))
 
 topK_acc.__name__ = 'topK_acc'
 
-model.compile(optimizer='adadelta',
-              loss='binary_crossentropy',
+adam=keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
+adadelta=keras.optimizers.Adadelta(lr=1.0, rho=0.95, epsilon=1e-08, decay=0.0)
+model.compile(optimizer=adadelta,
+              loss='categorical_crossentropy',
               metrics=['accuracy',topK_acc])
 
 
