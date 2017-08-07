@@ -60,6 +60,7 @@ logger.info(CNF)
 
 submissionPath =  "../data/output/submission.csv"
 END_MODEL =  "../data/endModel/endModel_{}.h5".format(version)
+BEST_WEIGHTS = pre_fix + "/" + CNF['weight_path']+ "/" +"{}.h5".format(version)
 
 save_path = pre_fix + '/' + CNF['save_path']
 
@@ -84,6 +85,8 @@ from keras.models import *
 
 print("[INFO] load model")
 model = load_model(END_MODEL)
+print("[INFO] load wegihts")
+model.load_weights(BEST_WEIGHTS)
 
 print("[INFO] predict")
 y_pred = model.predict(X_test, verbose=1)
@@ -98,6 +101,9 @@ from keras.preprocessing.image import *
 gen = ImageDataGenerator()
 test_generator = gen.flow_from_directory(test_path, (224,224), shuffle=False,
                                          batch_size=1, class_mode=None)
+
+if not os.path.exists(save_path):
+    os.mkdir(save_path)
 
 if dog_cat == 1:
     import pandas as pd

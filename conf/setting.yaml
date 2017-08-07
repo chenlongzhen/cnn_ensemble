@@ -64,7 +64,7 @@ board_path: 'data/tensorboard'
 train_log: 'data/train_log'
 weight_path: 'data/weight'
 batch_size: 128
-nb_epoch: 50 
+nb_epoch: 20 
 validation_split: 0.1
 topK_acc: 3 # topN accuracy
 allow_growth: 1 # gpu memory dynamic allocation

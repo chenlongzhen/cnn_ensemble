@@ -183,9 +183,14 @@ topK_acc.__name__ = 'topK_acc'
 
 adam=keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
 adadelta=keras.optimizers.Adadelta(lr=1.0, rho=0.95, epsilon=1e-08, decay=0.0)
+#model.compile(optimizer=adadelta,
+#              loss='categorical_crossentropy',
+#              metrics=['accuracy',topK_acc])
+
+# default topKacc, k=5. 
 model.compile(optimizer=adadelta,
               loss='categorical_crossentropy',
-              metrics=['accuracy',topK_acc])
+              metrics=['accuracy',keras.metrics.top_k_categorical_accuracy])
 
 
 ##############################
